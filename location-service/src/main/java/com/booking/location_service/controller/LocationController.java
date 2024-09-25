@@ -1,5 +1,6 @@
 package com.booking.location_service.controller;
 
+import com.booking.location_service.dto.APIResposeDto;
 import com.booking.location_service.dto.LocationDto;
 import com.booking.location_service.entity.Location;
 import com.booking.location_service.service.LocationService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,5 +25,11 @@ public class LocationController {
     @GetMapping("/getall")
     public ResponseEntity<List<Location>> getAll(){
         return new ResponseEntity<>(locationService.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/gettour/{id}")
+    public ResponseEntity<APIResposeDto> getEmployee(@PathVariable("id") Long idlocation){
+        APIResposeDto apiResponseDto = locationService.getTourById(idlocation);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
 }

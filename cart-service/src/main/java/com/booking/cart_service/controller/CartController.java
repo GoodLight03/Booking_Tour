@@ -1,6 +1,7 @@
 package com.booking.cart_service.controller;
 
 import com.booking.cart_service.dto.CartDto;
+import com.booking.cart_service.dto.PayDto;
 import com.booking.cart_service.entity.Cart;
 import com.booking.cart_service.service.CartService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +19,11 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @PostMapping("/save")
-    ResponseEntity<?> save(@RequestBody CartDto cartDto){
-        cartService.add(cartDto);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/save")
+//    ResponseEntity<?> save(@RequestBody CartDto cartDto){
+//        cartService.add(cartDto);
+//        return ResponseEntity.ok().build();
+//    }
 
     @GetMapping("/getbyuser/{id}")
     ResponseEntity<Cart> get(@PathVariable Long id){
@@ -41,4 +42,11 @@ public class CartController {
         cartService.updateNumber(cartDto);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/pay/{id}")
+    ResponseEntity<?> pay(@PathVariable Long id){
+        //cartService.updateNumber(pa);
+        return ResponseEntity.ok().build();
+    }
+
 }

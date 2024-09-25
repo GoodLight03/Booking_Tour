@@ -14,6 +14,8 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long id_tour;
+    private String name;
+    private Long price;
     private Integer number;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cart_id",referencedColumnName = "cart_id")

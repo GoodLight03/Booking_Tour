@@ -10,4 +10,6 @@ public interface CartService {
     Cart getByUser(Long id);
 
     void updateNumber(CartDto cartDto);
+
+    void add2(com.booking.tour_service.dto.CartDto cart,com.booking.tour_service.entity.Tour tour);
 }

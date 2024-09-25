@@ -8,4 +8,6 @@ import java.util.List;
 public interface TourService {
     Tour add(TourDto userDto);
     List<Tour> getAllByLocation(Long id);
+
+    Tour findById(Long id);
 }

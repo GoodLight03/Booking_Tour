@@ -39,6 +39,8 @@ public class CartServiceImpl implements CartService {
             item1.setId_tour(cartDto.getIdtour());
             item1.setCart(cart);
             item1.setNumber(1);
+            item1.setName(cartDto.getName());
+            item1.setPrice(cartDto.getPrice());
             itemRepository.save(item1);
         } else {
             item.setNumber(item.getNumber() + 1);
@@ -58,6 +60,15 @@ public class CartServiceImpl implements CartService {
         Item item = itemRepository.findByCartId(cart.getId(), cartDto.getIdtour());
         item.setNumber(cartDto.getNumber());
         itemRepository.save(item);
+    }
+
+    @Override
+    public void add2(com.booking.tour_service.dto.CartDto cart,com.booking.tour_service.entity.Tour tour) {
+        com.booking.cart_service.dto.CartDto cartDto=new CartDto(
+                cart.getId(), cart.getIdtour(), tour.getName(), tour.getPrice(), cart.getIduser(), cart.getNumber()
+        );
+
+        add(cartDto);
     }
 
 }

@@ -17,6 +17,8 @@ import java.util.Set;
 public class CartDto {
     private Long id;
     private Long idtour;
+    private String name;
+    private Long price;
     private Long iduser;
     private Integer number;
 }
