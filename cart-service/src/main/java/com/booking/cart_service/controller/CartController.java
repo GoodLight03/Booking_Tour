@@ -45,7 +45,7 @@ public class CartController {
 
     @PostMapping("/pay/{id}")
     ResponseEntity<?> pay(@PathVariable Long id){
-        //cartService.updateNumber(pa);
+        cartService.pay(id);
         return ResponseEntity.ok().build();
     }
 

@@ -1,11 +1,14 @@
 package com.booking.cart_service.service.Impl;
 
 import com.booking.cart_service.dto.CartDto;
+import com.booking.cart_service.dto.CartEvent;
 import com.booking.cart_service.entity.Cart;
 import com.booking.cart_service.entity.Item;
+import com.booking.cart_service.kafka.CartProcducer;
 import com.booking.cart_service.repository.CartRepository;
 import com.booking.cart_service.repository.ItemRepository;
 import com.booking.cart_service.service.CartService;
+import com.booking.tour_service.dto.TourEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private CartProcducer cartProcducer;
 
     @Override
     public void add(CartDto cartDto) {
@@ -69,6 +75,22 @@ public class CartServiceImpl implements CartService {
         );
 
         add(cartDto);
+    }
+
+    @Override
+    public void pay(Long id) {
+        CartEvent orderEvent = new CartEvent();
+        orderEvent.setStatus("PENDING");
+        orderEvent.setMessage("order status is in pending state");
+        orderEvent.setIdUser(id);
+        orderEvent.setItems(itemRepository.findByUserId(id));
+        orderEvent.setTotal(total(itemRepository.findByUserId(id)));
+        cartProcducer.sendMessage(orderEvent);
+    }
+
+    private Long total(List<Item> items){
+        return (Long)  items.stream().map(item -> item.getPrice() * item.getNumber())  // Chuyển đổi mỗi Item thành tổng giá * số lượng
+                .reduce(0L, Long::sum);
     }
 
 }
