@@ -1,13 +1,19 @@
 package com.booking.payment_service.service;
 
+import com.booking.cart_service.dto.CartEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -17,53 +23,6 @@ public class PaypalService {
     @Autowired
     private APIContext apiContext;
 
-
-//    public Payment createPayment(
-//            Double total,
-//            String currency,
-//            String method,
-//            String intent,
-//            String description,
-//            String cancelUrl,
-//            String successUrl) throws PayPalRESTException {
-//        Amount amount = new Amount();
-//        amount.setCurrency(currency);
-//        total = new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).doubleValue();
-//        amount.setTotal(String.format("%.2f", total));
-//
-//        Transaction transaction = new Transaction();
-//        transaction.setDescription(description);
-//        transaction.setAmount(amount);
-//
-//        List<Transaction> transactions = new ArrayList<>();
-//        transactions.add(transaction);
-//
-//        Payer payer = new Payer();
-//        payer.setPaymentMethod(method.toString());
-//
-//        Payment payment = new Payment();
-//        payment.setIntent(intent.toString());
-//        payment.setPayer(payer);
-//        payment.setTransactions(transactions);
-//        RedirectUrls redirectUrls = new RedirectUrls();
-//        redirectUrls.setCancelUrl(cancelUrl);
-//        redirectUrls.setReturnUrl(successUrl);
-//        payment.setRedirectUrls(redirectUrls);
-//
-//        return payment.create(apiContext);
-//    }
-
-
-
-//    public Payment executePayment(String paymentId, String payerId) throws PayPalRESTException{
-//        Payment payment = new Payment();
-//        payment.setId(paymentId);
-//        PaymentExecution paymentExecute = new PaymentExecution();
-//        paymentExecute.setPayerId(payerId);
-//        return payment.execute(apiContext, paymentExecute);
-//    }
-
-
     public Payment createPayment(
             Double total,
             String currency,
@@ -71,8 +30,9 @@ public class PaypalService {
             String intent,
             String description,
             String cancelUrl,
-            String successUrl
-    ) throws PayPalRESTException {
+            String successUrl,
+            CartEvent cartEvent
+    ) throws PayPalRESTException, JsonProcessingException, UnsupportedEncodingException {
         Amount amount = new Amount();
         amount.setCurrency(currency);
         amount.setTotal(String.format(Locale.forLanguageTag(currency), "%.2f", total)); // 9.99$ - 9,99€
@@ -94,7 +54,19 @@ public class PaypalService {
 
         RedirectUrls redirectUrls = new RedirectUrls();
         redirectUrls.setCancelUrl(cancelUrl);
-        redirectUrls.setReturnUrl(successUrl);
+
+        // Chuyển List đối tượng thành JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+        String ordersJson = objectMapper.writeValueAsString(cartEvent);
+
+        // Encode JSON để an toàn khi truyền qua URL
+        String encodedOrders = URLEncoder.encode(ordersJson, StandardCharsets.UTF_8.toString());
+
+        // Thêm chuỗi JSON vào successUrl
+        String successUrlWithParams = successUrl + "?orders=" + encodedOrders;;
+
+
+        redirectUrls.setReturnUrl(successUrlWithParams);
 
         payment.setRedirectUrls(redirectUrls);
 

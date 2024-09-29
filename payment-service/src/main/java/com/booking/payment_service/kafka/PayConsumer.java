@@ -29,18 +29,12 @@ public class PayConsumer {
         //cartService.add2(event.getCart(),event.getTour());
         // save the order event into the database
 
-        // Thực hiện thanh toán
-        Order order = new Order();  // Khởi tạo một Order dựa trên event nếu cần
-        order.setTotal(event.getTotal());
-        order.setCurrency("USD");  // Hoặc lấy từ sự kiện nếu có
-        order.setMethod("paypal"); // Giả định dùng Paypal, bạn có thể tùy chỉnh
-        order.setIntent("sale");
-        order.setDescription("Payment for order ID: " + event.getIdUser());
 
-        processPayment(order);  // Gọi hàm xử lý thanh toán
+
+        processPayment(event);  // Gọi hàm xử lý thanh toán
     }
 
-    private String processPayment(Order order) {
+    private String processPayment(CartEvent order) {
 
         String paymentApiUrl = "http://localhost:8084/api/payment/pay";  // Đường dẫn tới API thanh toán
 
@@ -63,4 +57,5 @@ public class PayConsumer {
         return null;  // Nếu không lấy được link thanh toán
 
     }
+
 }
